@@ -8,8 +8,6 @@
  */
 namespace Bitrix;
 
-require_once("bitrix.php");
-
 class deal extends Base
 {
     protected $deal_type;

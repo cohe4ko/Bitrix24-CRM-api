@@ -8,8 +8,6 @@
  */
 namespace Bitrix;
 
-require_once("bitrix.php");
-require_once 'Base.php';
 class lead extends Base
 {
     public function setClassName()

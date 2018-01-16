@@ -8,8 +8,6 @@
 
 namespace Bitrix;
 
-require_once('contact.php');
-require_once('lead.php');
 class customValue
 {
     protected $id;

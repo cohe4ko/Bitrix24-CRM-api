@@ -8,8 +8,6 @@
  */
 namespace Bitrix;
 
-require_once("bitrix.php");
-
 class contact extends Base
 {
     protected $bitrh_date;

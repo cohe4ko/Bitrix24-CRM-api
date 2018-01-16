@@ -46,11 +46,7 @@ ini_set('display_errors', 1);
 error_reporting(E_ALL);
 //подключаю библиотеку
 Timer::start();
-require_once("bitrix.php");
-require_once("deal.php");
-require_once("lead.php");
-require_once("contact.php");
-require_once('customValue.php');
+require_once("autoload.php");
 $bitrix = new bitrix('dreambani.bitrix24.ru',1,'wrv8k07q66cwux57');
 //$deal = new deal(412);
 //$deal->setTitle('Privet!');

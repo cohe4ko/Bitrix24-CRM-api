@@ -7,10 +7,7 @@
  * Time: 20:04
  */
 namespace Bitrix;
-require_once('lead.php');
-require_once('deal.php');
-require_once ('contact.php');
-use Bitrix\deal;
+
 class bitrix
 {
     public static $domain;
