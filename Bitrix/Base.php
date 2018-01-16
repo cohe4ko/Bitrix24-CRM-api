@@ -12,8 +12,17 @@ namespace Bitrix;
 abstract class Base
 {
     protected $className;
+    /**
+     * @var int
+     */
     protected $id;
+    /**
+     * @var string
+     */
     protected $title;
+    /**
+     * @var int
+     */
     protected $responsible_id;
     protected $date_create;
     protected $date_update;
@@ -23,6 +32,9 @@ abstract class Base
     protected $comment;
     protected $lead_source;
     protected $source_description;
+    /**
+     * @var customValue[]
+     */
     protected $phone;
     protected $email;
     protected $site;
@@ -169,11 +181,19 @@ abstract class Base
     {
         $phoneRaw = array(
                     "VALUE_TYPE"=>"MOBILE",
-                    "TYPE_ID"=>"PHONE",
+//                    "TYPE_ID"=>"PHONE",
                     "VALUE"=>"$phone"
         );
         $ph = new customValue($phoneRaw);
-        $this->phone = array(0=>$ph);
+        $this->phone[] = $ph;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 
     protected abstract function setClassName();
@@ -183,12 +203,16 @@ abstract class Base
      */
     protected function loadById($id){
         $result = bitrix::sendRequest("crm.$this->className.get?id=$id");
+        echo '<pre>';
+        var_dump($result);
+        echo '</pre>';
+        die;
         $this->loadInRaw($result['result']);
     }
     public function getResponsibleId(){
         return $this->responsible_id;
     }
-    protected function loadInRaw($dataRaw){
+    public function loadInRaw($dataRaw){
         $this->id = $dataRaw['ID'];
         $this->title = isset($dataRaw['TITLE'])?$dataRaw['TITLE']:null;
         $this->responsible_id = isset($dataRaw['ASSIGNED_BY_ID'])?$dataRaw['ASSIGNED_BY_ID']:null;
@@ -251,7 +275,10 @@ abstract class Base
         }
         else{
             $url = "crm.$this->className.add";
-
+            $phones = array();
+            foreach ($this->phone as $fields){
+                $phones[]=$fields->getRaw();
+            }
             $request = array(
                 "fields"=>array(
                     "TITLE"=>$this->title,
@@ -259,7 +286,7 @@ abstract class Base
                     "NAME"=>$this->name,
                     "SECOND_NAME"=>$this->otchestvo,
                     "LAST_NAME"=>$this->family_name,
-                    "PHONE"=>$this->phone
+                    "PHONE"=>$phones
                 ),
                 'params' => array(
                 "REGISTER_SONET_EVENT" => "Y"

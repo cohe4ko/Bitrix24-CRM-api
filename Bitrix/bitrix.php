@@ -29,48 +29,45 @@ class bitrix
      */
     static function sendRequest($url, $request=null)
     {
-        $url = 'https://'.self::$domain.'/rest/'.self::$user_id.'/'.self::$webhook."/$url";
-//            $result = file_get_contents($url,
-//                false,
-//                stream_context_create(
-//                    array(
-//                        'http' => array(
-//                            'method' => 'POST',
-//                            'header' => 'Content-type: application/json',
-//                            'content' => json_encode($request)
-//                        )
-//                    )
-//                )
-//            );
-//            return json_decode($result,true);
+        $url = 'https://'.self::$domain.'/rest/'.self::$user_id.'/'.self::$webhook."/$url";//TODO подумать над http и https
+
         $data_string = json_encode($request);
 
-        $curl = curl_init("$url");
-
+        $curl = curl_init($url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+//        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($curl, CURLOPT_HTTPHEADER, array(
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($data_string))
         );
         $result = curl_exec($curl);
         curl_close($curl);
-        return $result;
+        return json_decode($result,true);
     }
-    static function getList($class_name,$filter=null){
+
+    /**
+     * @param string $class_name
+     * @param null|array $filter
+     * @return Base[]
+     */
+    protected function getList($class_name, $filter){
         $url = "crm.$class_name.list";
-//        if (!empty($filter)) {
-//            $request = array('filter'=>array('ID'=>$id));
-//            return bitrix::sendRequest($url,$request);
-//        }
+        if (!empty($filter)) {
+            $request = array('filter'=>$filter);
+            $getRaw = bitrix::sendRequest($url,$request);
+        }
+        else {
+            $getRaw = bitrix::sendRequest($url);
+        }
+        echo '<pre>';
+        print_r($getRaw);
             $group_of_obj = array();
-            $test = bitrix::sendRequest($url,null);
-            foreach ($test['result'] as $a) {
-                /** @var deal|lead|contact $obj_list */
+            foreach ($getRaw['result'] as $item) {
+                /** @var Base $obj_list */
                 $bit ="\\Bitrix\\$class_name";
-                $obj_list = new $bit();
-                $obj_list->loadInRaw($a);
+                $obj_list = new $bit($item['ID']);
                 $group_of_obj[] = $obj_list;
             }
             return $group_of_obj;
@@ -79,6 +76,27 @@ class bitrix
      * функция логирования
      * @param $var
      */
+    public function getLeadList($filter=null){
+        return $this->getList('lead',$filter);
+    }
+    public function searchLeads($phone,$email=null){
+        $leads = array();
+        if(!empty($phone)){
+            $filter = array("PHONE"=>$phone);
+            $result = $this->getLeadList($filter);
+            foreach ($result as $lead) {
+                $leads[$lead->getId()] = $lead;
+            }
+        }
+        if(!empty($email)){
+            $filter = array("EMAIL"=>$email);
+            $result = $this->getLeadList($filter);
+            foreach ($result as $lead) {
+                $leads[$lead->getId()] = $lead;
+            }
+        }
+        return $leads;
+    }
     function Logs($var)
     {
         $logfile = 'bitrix.log';

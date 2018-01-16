@@ -22,7 +22,15 @@ class customValue
         $this->value = isset($dataRaw['VALUE'])?$dataRaw['VALUE']:null;
         $this->type_id = isset($dataRaw['TYPE_ID'])?$dataRaw['TYPE_ID']:null;
     }
-
+    public function getRaw(){
+        $raw = array(
+            "ID"=>$this->id,
+            "VALUE_TYPE"=>$this->value_type,
+            "VALUE"=>$this->value,
+            "TYPE_ID"=>$this->type_id
+        );
+        return $raw;
+    }
     /**
      * @return mixed
      */

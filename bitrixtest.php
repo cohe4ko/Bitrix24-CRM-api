@@ -52,17 +52,19 @@ $bitrix = new bitrix('dreambani.bitrix24.ru',1,'wrv8k07q66cwux57');
 //$deal->setTitle('Privet!');
 //$deal->setResponsibleId('6');
 //$deal->save();
-$cont = new lead();
-$cont->setTitle('Teeeega');
-$cont->setResponsibleId('6');
-$cont->setPhone('79853381868');
-$cont->setFamilyName('FamilyName');
-$cont->setName('Name');
-$cont->setOtchestvo('Otchestvo');
+$search = $bitrix->searchLeads('89853381868');
+
+//$cont = new lead();
+//$cont->setTitle('Teeeega');
+//$cont->setResponsibleId('6');
+//$cont->setPhone('79853381868');
+//$cont->setFamilyName('FamilyName');
+//$cont->setName('Name');
+//$cont->setOtchestvo('Otchestvo');
 //$cont->save();
 
 echo "<pre>";
-print_r($cont);
+print_r($search);
 //print_r($list);
 //var_dump($deal);
 echo "<br>";
