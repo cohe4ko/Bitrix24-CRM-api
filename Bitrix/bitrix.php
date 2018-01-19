@@ -27,24 +27,25 @@ class bitrix
      * @param $request - тело запроса
      * @return bool|string
      */
-    static function sendRequest($url, $request=null)
-    {
+    static function sendRequest($url, $request=null){
         $url = 'https://'.self::$domain.'/rest/'.self::$user_id.'/'.self::$webhook."/$url";//TODO подумать над http и https
 
-        $data_string = json_encode($request);
+        $queryData = http_build_query(array($request));
 
-        $curl = curl_init($url);
-        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_string);
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-//        curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($data_string))
-        );
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_POST           => 1,
+            CURLOPT_HEADER         => 0,
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL            => $url,
+            CURLOPT_POSTFIELDS     => $queryData,
+        ));
+
         $result = curl_exec($curl);
         curl_close($curl);
-        return json_decode($result,true);
+
+        return json_decode($result, true);
     }
 
     /**
@@ -52,7 +53,7 @@ class bitrix
      * @param null|array $filter
      * @return Base[]
      */
-    protected function getList($class_name, $filter){
+    public function getList($class_name, $filter=null){
         $url = "crm.$class_name.list";
         if (!empty($filter)) {
             $request = array('filter'=>$filter);

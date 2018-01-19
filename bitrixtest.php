@@ -48,12 +48,12 @@ error_reporting(E_ALL);
 Timer::start();
 require_once("autoload.php");
 $bitrix = new bitrix('dreambani.bitrix24.ru',1,'wrv8k07q66cwux57');
-//$deal = new deal(412);
+$deal = new deal(412);
 //$deal->setTitle('Privet!');
 //$deal->setResponsibleId('6');
 //$deal->save();
-$search = $bitrix->searchLeads('89853381868');
-
+//$search = $bitrix->searchLeads('89853381868');
+$search = $bitrix->getList('lead');
 //$cont = new lead();
 //$cont->setTitle('Teeeega');
 //$cont->setResponsibleId('6');
@@ -64,9 +64,8 @@ $search = $bitrix->searchLeads('89853381868');
 //$cont->save();
 
 echo "<pre>";
+//print_r($deal);
 print_r($search);
-//print_r($list);
-//var_dump($deal);
 echo "<br>";
 echo 'Время работы скрипта: '.Timer::finish() . ' сек.';
 

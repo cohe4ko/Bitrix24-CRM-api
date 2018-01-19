@@ -203,10 +203,6 @@ abstract class Base
      */
     protected function loadById($id){
         $result = bitrix::sendRequest("crm.$this->className.get?id=$id");
-        echo '<pre>';
-        var_dump($result);
-        echo '</pre>';
-        die;
         $this->loadInRaw($result['result']);
     }
     public function getResponsibleId(){
