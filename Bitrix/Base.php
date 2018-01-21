@@ -267,7 +267,7 @@ abstract class Base
             );
             $answer = bitrix::sendRequest($url,$request);
 //            echo '<pre>';
-            var_dump($answer);
+//            var_dump($answer);
         }
         else{
             $url = "crm.$this->className.add";
