@@ -62,7 +62,7 @@ $search = $bitrix->searchLeads('89853381868');
 //$cont->setName('Name');
 //$cont->setOtchestvo('Otchestvo');
 //$cont->save();
-//$search =$bitrix::sendRequest('crm.lead.list','{"filter":{"PHONE":"89853381868"}}');
+
 echo "<pre>";
 print_r($search);
 echo "<br>";

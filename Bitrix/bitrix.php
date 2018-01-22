@@ -32,8 +32,6 @@ class bitrix
     {
         $url = 'https://' . self::$domain . '/rest/' . self::$user_id . '/' . self::$webhook . "/$url";//TODO подумать над http и https
 
-        $queryData = http_build_query($request);
-
         $curl = curl_init();
         curl_setopt_array($curl, array(
             CURLOPT_SSL_VERIFYPEER => 0,
@@ -41,13 +39,17 @@ class bitrix
             CURLOPT_HEADER => 0,
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => $url,
-            CURLOPT_POSTFIELDS => $queryData,
         ));
-
+        if (!empty($request)) {
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($request));
+        }
         $result = curl_exec($curl);
         curl_close($curl);
-
-        return json_decode($result, true);
+//        print_r($result);//вывод ответа сервера
+//        if (empty($result)) {//TODO как считать код ответа сервера PHP
+//            return false;
+//        } else
+            return json_decode($result, true);
     }
 
     /**
@@ -65,24 +67,27 @@ class bitrix
             $getRaw = bitrix::sendRequest($url);
         }
         $group_of_obj = array();
-        foreach ($getRaw['result'] as $item) {
-            /** @var Base $obj_list */
-            $bit = "\\Bitrix\\$class_name";
-            $obj_list = new $bit($item['ID']);
-            $group_of_obj[] = $obj_list;
+        if ($getRaw !== false) {
+            foreach ($getRaw['result'] as $item) {
+                /** @var Base $obj_list */
+                $bit = "\\Bitrix\\$class_name";
+                $obj_list = new $bit($item['ID']);
+                $group_of_obj[$item['ID']] = $obj_list;
+            }
+            return $group_of_obj;
         }
-        return $group_of_obj;
+        return array();
     }
-
-    /**
-     * функция логирования
-     * @param $var
-     */
     public function getLeadList($filter = null)
     {
         return $this->getList('lead', $filter);
     }
 
+    /**
+     * @param $phone
+     * @param null $email
+     * @return Base[]
+     */
     public function searchLeads($phone, $email = null)
     {
         $leads = array();
